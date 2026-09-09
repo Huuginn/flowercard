@@ -133,7 +133,8 @@ function render() {
 
   debugText.textContent =
     `[디버그] 참가자 ${order.length}명 / host=${Playroom.isHost()} / ` +
-    `myId=${myId.slice(0, 5)} / order=${order.map((id) => id.slice(0, 5)).join(",")}`;
+    `myId=${myId.slice(0, 5)} / order=${order.map((id) => id.slice(0, 5)).join(",")} / ` +
+    `주소검색어=${location.search || "(없음)"} / joinRoomCode=${joinRoomCode || "(없음)"}`;
 
   if (order.length < 2 || !board) {
     boardEl.hidden = true;
