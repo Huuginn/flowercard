@@ -8,9 +8,30 @@ const WIN_LINES = [
 
 const statusText = document.getElementById("statusText");
 const roomCodeText = document.getElementById("roomCodeText");
+const roomLinkText = document.getElementById("roomLinkText");
+const copyLinkBtn = document.getElementById("copyLinkBtn");
 const boardEl = document.getElementById("board");
 const cells = Array.from(document.querySelectorAll(".cell"));
 const restartBtn = document.getElementById("restartBtn");
+
+function inviteLinkFor(roomCode) {
+  return location.href.split("#")[0] + "#r=" + roomCode;
+}
+
+copyLinkBtn.addEventListener("click", async () => {
+  const link = copyLinkBtn.dataset.link;
+  if (!link) return;
+  try {
+    await navigator.clipboard.writeText(link);
+    const original = copyLinkBtn.textContent;
+    copyLinkBtn.textContent = "복사됐어요!";
+    setTimeout(() => {
+      copyLinkBtn.textContent = original;
+    }, 1500);
+  } catch (e) {
+    statusText.textContent = "복사에 실패했어요. 링크를 길게 눌러 직접 복사해주세요.";
+  }
+});
 
 function checkResult(board) {
   for (const [a, b, c] of WIN_LINES) {
@@ -106,9 +127,19 @@ function render() {
   if (status === "waiting") {
     boardEl.hidden = true;
     restartBtn.hidden = true;
-    statusText.textContent = "친구가 들어오기를 기다리는 중... (방 코드를 공유해주세요)";
+    statusText.textContent = "친구가 들어오기를 기다리는 중... (아래 링크나 방 코드를 공유해주세요)";
+    if (roomCode) {
+      const link = inviteLinkFor(roomCode);
+      roomLinkText.hidden = false;
+      roomLinkText.textContent = link;
+      copyLinkBtn.hidden = false;
+      copyLinkBtn.dataset.link = link;
+    }
     return;
   }
+
+  roomLinkText.hidden = true;
+  copyLinkBtn.hidden = true;
 
   if (status === "ended") {
     boardEl.hidden = true;
