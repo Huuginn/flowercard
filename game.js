@@ -116,6 +116,12 @@ function requestRestart() {
 function render() {
   hostMaintainGame();
 
+  // 방장이 남긴 신호가 상대방 화면까지 실제로 전달되는지 직접 확인하기 위한 진단용 코드.
+  if (Playroom.isHost()) {
+    Playroom.setState("debugHostId", Playroom.myPlayer().id, true);
+  }
+  const debugHostId = Playroom.getState("debugHostId");
+
   const order = getOrder();
   const board = Playroom.getState("board");
   const turn = Playroom.getState("turn");
@@ -134,7 +140,8 @@ function render() {
   debugText.textContent =
     `[디버그] 참가자 ${order.length}명 / host=${Playroom.isHost()} / ` +
     `myId=${myId.slice(0, 5)} / order=${order.map((id) => id.slice(0, 5)).join(",")} / ` +
-    `주소검색어=${location.search || "(없음)"} / joinRoomCode=${joinRoomCode || "(없음)"}`;
+    `주소검색어=${location.search || "(없음)"} / joinRoomCode=${joinRoomCode || "(없음)"} / ` +
+    `방장신호=${debugHostId ? debugHostId.slice(0, 5) : "(없음)"}`;
 
   if (order.length < 2 || !board) {
     boardEl.hidden = true;
@@ -189,14 +196,19 @@ restartBtn.addEventListener("click", requestRestart);
 
 const joinRoomCode = new URLSearchParams(location.search).get("room");
 
+// insertCoin의 roomCode 옵션은 실제 참가에 반영되지 않는 것으로 확인되어,
+// 대신 소스코드로 확인했던 해시(#r=R코드) 방식을 그대로 재사용한다.
+// 카카오톡 등에서 잘리지 않도록, 코드 자체는 안전한 쿼리 파라미터로 전달받고
+// insertCoin 호출 직전에 우리가 직접 해시를 채워 넣는다.
+if (joinRoomCode) {
+  location.hash = "r=R" + joinRoomCode;
+}
+
 const insertCoinOptions = {
   gameId: GAME_ID,
   maxPlayersPerRoom: 2,
   skipLobby: true, // 헷갈렸던 기본 Launch/Invite 화면을 건너뛰고 우리 화면만 보여준다.
 };
-if (joinRoomCode) {
-  insertCoinOptions.roomCode = joinRoomCode;
-}
 
 Playroom.insertCoin(
   insertCoinOptions,
