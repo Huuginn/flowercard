@@ -16,9 +16,11 @@ const restartBtn = document.getElementById("restartBtn");
 const debugText = document.getElementById("debugText");
 
 function inviteLinkFor(roomCode) {
-  // Playroom은 해시의 방 코드 앞 글자 하나를 내부적으로 잘라내므로
-  // "R"을 붙여서 방 코드가 그대로 전달되게 한다.
-  return location.href.split("#")[0] + "#r=R" + roomCode;
+  // 카카오톡 등 메신저가 링크 미리보기를 만들면서 "#"뒤쪽(해시)을 잘라내는
+  // 경우가 있어, 실제 요청에 항상 포함되는 "?" 쿼리 파라미터를 사용한다.
+  const url = new URL(location.href.split("#")[0].split("?")[0]);
+  url.searchParams.set("room", roomCode);
+  return url.toString();
 }
 
 copyLinkBtn.addEventListener("click", async () => {
@@ -184,11 +186,19 @@ cells.forEach((cell) => {
 
 restartBtn.addEventListener("click", requestRestart);
 
+const joinRoomCode = new URLSearchParams(location.search).get("room");
+
+const insertCoinOptions = {
+  gameId: GAME_ID,
+  maxPlayersPerRoom: 2,
+  skipLobby: true, // 헷갈렸던 기본 Launch/Invite 화면을 건너뛰고 우리 화면만 보여준다.
+};
+if (joinRoomCode) {
+  insertCoinOptions.roomCode = joinRoomCode;
+}
+
 Playroom.insertCoin(
-  {
-    gameId: GAME_ID,
-    maxPlayersPerRoom: 2,
-  },
+  insertCoinOptions,
   () => {
     if (Playroom.isHost()) {
       setupHostRPC();
