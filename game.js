@@ -15,7 +15,9 @@ const cells = Array.from(document.querySelectorAll(".cell"));
 const restartBtn = document.getElementById("restartBtn");
 
 function inviteLinkFor(roomCode) {
-  return location.href.split("#")[0] + "#r=" + roomCode;
+  // Playroom은 해시의 방 코드 앞 글자 하나를 내부적으로 잘라내므로
+  // "R"을 붙여서 방 코드가 그대로 전달되게 한다.
+  return location.href.split("#")[0] + "#r=R" + roomCode;
 }
 
 copyLinkBtn.addEventListener("click", async () => {
