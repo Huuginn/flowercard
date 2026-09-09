@@ -94,6 +94,13 @@ body {
   background: rgba(139, 92, 246, 0.15);
 }
 
+.debug-text {
+  margin-top: 14px;
+  font-size: 0.72rem;
+  color: #666;
+  word-break: break-all;
+}
+
 .board {
   width: 100%;
   max-width: 340px;
