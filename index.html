@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>flowercard - 틱택토 테스트</title>
+<link rel="stylesheet" href="vendor/playroom.css" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app">
+    <h1 class="title">🌼 flowercard <span class="subtitle">틱택토 테스트</span></h1>
+
+    <section id="statusPanel" class="status-panel">
+      <p id="statusText">연결 중...</p>
+      <p id="roomCodeText" class="room-code" hidden></p>
+    </section>
+
+    <section id="board" class="board" hidden>
+      <button class="cell" data-index="0"></button>
+      <button class="cell" data-index="1"></button>
+      <button class="cell" data-index="2"></button>
+      <button class="cell" data-index="3"></button>
+      <button class="cell" data-index="4"></button>
+      <button class="cell" data-index="5"></button>
+      <button class="cell" data-index="6"></button>
+      <button class="cell" data-index="7"></button>
+      <button class="cell" data-index="8"></button>
+    </section>
+
+    <button id="restartBtn" class="restart-btn" hidden>다시하기</button>
+  </main>
+
+  <script src="vendor/playroom.full.umd.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

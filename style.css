@@ -1,0 +1,131 @@
+:root {
+  color-scheme: dark;
+  --bg: #14121a;
+  --panel: #201d29;
+  --border: #35313f;
+  --text: #f2eefb;
+  --muted: #a79fc0;
+  --accent: #8b5cf6;
+  --x-color: #8b5cf6;
+  --o-color: #f472b6;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  display: flex;
+  justify-content: center;
+}
+
+.app {
+  width: 100%;
+  max-width: 480px;
+  padding: 24px 16px 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.title {
+  font-size: 1.6rem;
+  margin: 8px 0 0;
+  text-align: center;
+}
+
+.subtitle {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--muted);
+  font-weight: normal;
+  margin-top: 4px;
+}
+
+.status-panel {
+  width: 100%;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+  text-align: center;
+}
+
+#statusText {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+.room-code {
+  margin: 10px 0 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--accent);
+}
+
+.board {
+  width: 100%;
+  max-width: 340px;
+  aspect-ratio: 1 / 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.cell {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.cell:active {
+  background: #2a2635;
+}
+
+.cell.x {
+  color: var(--x-color);
+}
+
+.cell.o {
+  color: var(--o-color);
+}
+
+.cell:disabled {
+  opacity: 1;
+}
+
+.restart-btn {
+  padding: 14px 28px;
+  border-radius: 999px;
+  border: none;
+  background: var(--accent);
+  color: white;
+  font-size: 1.05rem;
+  font-weight: 600;
+  touch-action: manipulation;
+}
+
+.restart-btn:active {
+  opacity: 0.85;
+}
+
+[hidden] {
+  display: none !important;
+}
