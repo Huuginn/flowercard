@@ -13,6 +13,7 @@ const copyLinkBtn = document.getElementById("copyLinkBtn");
 const boardEl = document.getElementById("board");
 const cells = Array.from(document.querySelectorAll(".cell"));
 const restartBtn = document.getElementById("restartBtn");
+const debugText = document.getElementById("debugText");
 
 function inviteLinkFor(roomCode) {
   // Playroom은 해시의 방 코드 앞 글자 하나를 내부적으로 잘라내므로
@@ -51,8 +52,13 @@ function emptyBoard() {
 
 // 누가 몇 번째로 들어왔는지는 우리가 따로 기록하지 않고,
 // Playroom이 이미 관리하고 있는 현재 참가자 목록을 그대로 순서로 사용한다.
+// getParticipants()는 실제로는 배열을 반환하므로(타입 정의와 다름) 방어적으로 처리한다.
 function getOrder() {
-  return Object.keys(Playroom.getParticipants());
+  const participants = Playroom.getParticipants();
+  const list = Array.isArray(participants)
+    ? participants
+    : Object.values(participants || {});
+  return list.map((p) => p.id);
 }
 
 // 방장(host)만 게임 상태를 실제로 바꾼다. 나머지 플레이어는 상태를 읽어서 화면만 갱신한다.
@@ -122,6 +128,10 @@ function render() {
   const myId = Playroom.myPlayer().id;
   const myIndex = order.indexOf(myId);
   const mySymbol = myIndex === 0 ? "X" : myIndex === 1 ? "O" : null;
+
+  debugText.textContent =
+    `[디버그] 참가자 ${order.length}명 / host=${Playroom.isHost()} / ` +
+    `myId=${myId.slice(0, 5)} / order=${order.map((id) => id.slice(0, 5)).join(",")}`;
 
   if (order.length < 2 || !board) {
     boardEl.hidden = true;
