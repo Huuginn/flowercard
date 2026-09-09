@@ -71,6 +71,29 @@ body {
   color: var(--accent);
 }
 
+.room-link {
+  margin: 10px 0 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+  word-break: break-all;
+}
+
+.copy-btn {
+  margin-top: 14px;
+  padding: 12px 22px;
+  border-radius: 999px;
+  border: 1px solid var(--accent);
+  background: transparent;
+  color: var(--accent);
+  font-size: 1rem;
+  font-weight: 600;
+  touch-action: manipulation;
+}
+
+.copy-btn:active {
+  background: rgba(139, 92, 246, 0.15);
+}
+
 .board {
   width: 100%;
   max-width: 340px;
