@@ -49,30 +49,26 @@ function emptyBoard() {
   return Array(9).fill(null);
 }
 
+// 누가 몇 번째로 들어왔는지는 우리가 따로 기록하지 않고,
+// Playroom이 이미 관리하고 있는 현재 참가자 목록을 그대로 순서로 사용한다.
+function getOrder() {
+  return Object.keys(Playroom.getParticipants());
+}
+
 // 방장(host)만 게임 상태를 실제로 바꾼다. 나머지 플레이어는 상태를 읽어서 화면만 갱신한다.
-function setupHostLogic() {
-  Playroom.onPlayerJoin((player) => {
-    let order = Playroom.getState("playerOrder") || [];
-    if (!order.includes(player.id) && order.length < 2) {
-      order = [...order, player.id];
-      Playroom.setState("playerOrder", order, true);
-      if (order.length === 2) {
-        Playroom.setState("board", emptyBoard(), true);
-        Playroom.setState("turn", 0, true);
-        Playroom.setState("winner", null, true);
-        Playroom.setState("status", "playing", true);
-      } else {
-        Playroom.setState("status", "waiting", true);
-      }
-    }
+function hostMaintainGame() {
+  if (!Playroom.isHost()) return;
+  const order = getOrder();
+  if (order.length >= 2 && !Playroom.getState("board")) {
+    Playroom.setState("board", emptyBoard(), true);
+    Playroom.setState("turn", 0, true);
+    Playroom.setState("winner", null, true);
+  }
+}
 
-    player.onQuit(() => {
-      Playroom.setState("status", "ended", true);
-    });
-  });
-
+function setupHostRPC() {
   Playroom.RPC.register("makeMove", (payload, senderPlayer) => {
-    const order = Playroom.getState("playerOrder") || [];
+    const order = getOrder();
     const turn = Playroom.getState("turn");
     const winner = Playroom.getState("winner");
     const board = Playroom.getState("board") || emptyBoard();
@@ -110,9 +106,10 @@ function requestRestart() {
 }
 
 function render() {
-  const order = Playroom.getState("playerOrder") || [];
-  const status = Playroom.getState("status") || "waiting";
-  const board = Playroom.getState("board") || emptyBoard();
+  hostMaintainGame();
+
+  const order = getOrder();
+  const board = Playroom.getState("board");
   const turn = Playroom.getState("turn");
   const winner = Playroom.getState("winner");
 
@@ -126,7 +123,7 @@ function render() {
   const myIndex = order.indexOf(myId);
   const mySymbol = myIndex === 0 ? "X" : myIndex === 1 ? "O" : null;
 
-  if (status === "waiting") {
+  if (order.length < 2 || !board) {
     boardEl.hidden = true;
     restartBtn.hidden = true;
     statusText.textContent = "친구가 들어오기를 기다리는 중... (아래 링크나 방 코드를 공유해주세요)";
@@ -142,14 +139,6 @@ function render() {
 
   roomLinkText.hidden = true;
   copyLinkBtn.hidden = true;
-
-  if (status === "ended") {
-    boardEl.hidden = true;
-    restartBtn.hidden = true;
-    statusText.textContent = "상대방이 나갔어요. 게임이 종료되었습니다.";
-    return;
-  }
-
   boardEl.hidden = false;
 
   cells.forEach((cell, i) => {
@@ -192,7 +181,7 @@ Playroom.insertCoin(
   },
   () => {
     if (Playroom.isHost()) {
-      setupHostLogic();
+      setupHostRPC();
     }
     setInterval(render, 200);
     render();
